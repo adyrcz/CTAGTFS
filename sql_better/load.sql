@@ -2,15 +2,17 @@
 
 Script contributed by Michael Perkins
 
+updated by Brendan Nee to include shapes.txt, fare_attributes.txt and fare_rules.txt files
+
 example usage:
 cat load.sql | mysql -u root
 (assumes user is in same directory as GTFS source files)
 
 */
 
-CREATE DATABASE IF NOT EXISTS wmata_gtfs;
+CREATE DATABASE IF NOT EXISTS db97376_cccta;
 
-USE wmata_gtfs
+USE db97376_cccta
 
 DROP TABLE IF EXISTS agency;
 
@@ -18,7 +20,8 @@ CREATE TABLE `agency` (
     agency_id int(11) PRIMARY KEY,
     agency_name VARCHAR(255),
     agency_url VARCHAR(255),
-    agency_timezone VARCHAR(50)
+    agency_timezone VARCHAR(50),
+	agency_phone VARCHAR(50)
 );
 
 DROP TABLE IF EXISTS calendar;
@@ -47,16 +50,45 @@ CREATE TABLE `calendar_dates` (
     KEY `exception_type` (exception_type)    
 );
 
+DROP TABLE IF EXISTS fare_attributes;
+
+CREATE TABLE `fare_attributes` (
+    fare_id INT(11),
+    price DECIMAL(9,6),
+    currency_type VARCHAR(8),	
+	payment_method INT(11),
+	transfers INT(11),
+    KEY `fare_id` (fare_id) 
+);
+
+DROP TABLE IF EXISTS fare_rules;
+
+CREATE TABLE `fare_rules` (
+    fare_id INT(11),
+	route_id INT(11),
+    KEY `fare_id` (fare_id),
+	KEY `route_id` (route_id)
+);
+
+
 DROP TABLE IF EXISTS routes;
 
 CREATE TABLE `routes` (
     route_id INT(11) PRIMARY KEY,
-	agency_id INT(11),
 	route_short_name VARCHAR(50),
 	route_long_name VARCHAR(255),
 	route_type INT(2),
-	KEY `agency_id` (agency_id),
 	KEY `route_type` (route_type)
+);
+
+DROP TABLE IF EXISTS shapes;
+
+CREATE TABLE `shapes` (
+    shape_id VARCHAR(50),
+	shape_pt_lat DECIMAL(9,6),
+	shape_pt_lon DECIMAL(9,6),
+	shape_pt_sequence INT(11),
+	KEY `shape_id` (shape_id)
 );
 
 DROP TABLE IF EXISTS stop_times;
@@ -67,13 +99,9 @@ CREATE TABLE `stop_times` (
 	departure_time VARCHAR(8),
 	stop_id INT(11),
 	stop_sequence INT(11),
-	pickup_type INT(2),
-	drop_off_type INT(2),
 	KEY `trip_id` (trip_id),
 	KEY `stop_id` (stop_id),
-	KEY `stop_sequence` (stop_sequence),
-	KEY `pickup_type` (pickup_type),
-	KEY `drop_off_type` (drop_off_type)
+	KEY `stop_sequence` (stop_sequence)
 );
 
 DROP TABLE IF EXISTS stops;
@@ -81,11 +109,8 @@ DROP TABLE IF EXISTS stops;
 CREATE TABLE `stops` (
     stop_id INT(11) PRIMARY KEY,
 	stop_name VARCHAR(255),
-	stop_desc VARCHAR(255),
-	stop_lat DECIMAL(8,6),
-	stop_lon DECIMAL(8,6),
-	zone_id INT(11),
-	KEY `zone_id` (zone_id),
+	stop_lat DECIMAL(9,6),
+	stop_lon DECIMAL(9,6),
 	KEY `stop_lat` (stop_lat),
 	KEY `stop_lon` (stop_lon)
 );
@@ -98,23 +123,29 @@ CREATE TABLE `trips` (
 	trip_id INT(11) PRIMARY KEY,
 	trip_headsign VARCHAR(255),
 	direction_id TINYINT(1),
-	block_id INT(11),
+	shape_id VARCHAR(50),
 	KEY `route_id` (route_id),
 	KEY `service_id` (service_id),
 	KEY `direction_id` (direction_id),
-	KEY `block_id` (block_id)
+	KEY `shape_id` (shape_id)
 );
 
-LOAD DATA LOCAL INFILE 'agency.txt' INTO TABLE agency FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'agency.txt' INTO TABLE agency FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'calendar.txt' INTO TABLE calendar FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'calendar.txt' INTO TABLE calendar FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'calendar_dates.txt' INTO TABLE calendar_dates FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'calendar_dates.txt' INTO TABLE calendar_dates FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'routes.txt' INTO TABLE routes FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'fare_attributes.txt' INTO TABLE fare_attributes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'stop_times.txt' INTO TABLE stop_times FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'fare_rules.txt' INTO TABLE fare_rules FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'stops.txt' INTO TABLE stops FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'routes.txt' INTO TABLE routes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
 
-LOAD DATA LOCAL INFILE 'trips.txt' INTO TABLE trips FIELDS TERMINATED BY ',' IGNORE 1 LINES;
+LOAD DATA LOCAL INFILE 'shapes.txt' INTO TABLE shapes FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'stop_times.txt' INTO TABLE stop_times FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'stops.txt' INTO TABLE stops FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
+
+LOAD DATA LOCAL INFILE 'trips.txt' INTO TABLE trips FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' IGNORE 1 LINES;
