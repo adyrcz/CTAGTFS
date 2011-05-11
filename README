@@ -1,19 +1,17 @@
 GTFS MySQL IMPORT SCRIPT
-Author: Tom Lee (thomas.j.lee@gmail.com)
+Author: Andy Dyrcz (adyrcz@gmail.com)
 
 This is a simple set of scripts that will import a GTFS dataset into
-a lightweight MySQL database.  The work is based on Washington, DC's
-WMATA GTFS dataset, and has not been thoroughly checked for completeness
-against the GTFS spec -- some optional fields or tables may not 
-currently be supported (but should be trivial to add).
+a lightweight MySQL database.  
 
-In addition to the GTFS fields, a number of columns have been created
-to assist in the conversion of GTFS's string-based date/time 
-representations to more useful Unix timestamp-style second counts.
+The work was originally based on Washington, DC's WMATA GTFS dataset.
+It has been updated to work specifically on Chicago's CTA GTFS datasets.
+
+In addition to the GTFS scripts, there are several other tools included in this project. ex. Converting string-based date/time values to Unix friendly timestamp-style second counts.
 
 DEAD-SIMPLE USAGE:
 
-1. Create a database, e.g. CREATE DATABASE gtfs
+1. Create a database, ex. CREATE DATABASE gtfs
 
 2. Run table creation scripts against the database:
 
@@ -21,10 +19,12 @@ DEAD-SIMPLE USAGE:
 	
 3. Run the import script:
 
-	python load_gtfs.py
+	load_gtfs.sh
 	
 4. Run the time index creation script:
 
-	python build_indices.py
+	build_indices.sh
 	
-5. Build something neat
+5. Use the database you've just setup to create something useful!!!
+
+Please provide feedback on what you're using the GTFS database for!
