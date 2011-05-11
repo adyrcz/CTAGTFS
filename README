@@ -4,8 +4,9 @@ Author: Andy Dyrcz (adyrcz@gmail.com)
 This is a simple set of scripts that will import a GTFS dataset into
 a lightweight MySQL database.  
 
-The work was originally based on Washington, DC's WMATA GTFS dataset.
-It has been updated to work specifically on Chicago's CTA GTFS datasets.
+The work was originally based on Washington, DC's WMATA GTFS dataset and scripts were written in python.
+Original Author: Tom Lee (thomas.j.lee@gmail.com)
+It has been updated to work specifically on Chicago's CTA GTFS datasets. Also the python scripts have been converted to Bash shell scripts and the SQL has been updated to build the database according to the dataset provided by the CTA.
 
 In addition to the GTFS scripts, there are several other tools included in this project. ex. Converting string-based date/time values to Unix friendly timestamp-style second counts.
 
