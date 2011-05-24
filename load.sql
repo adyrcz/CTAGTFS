@@ -92,9 +92,9 @@ CREATE TABLE `stop_times` (
 	departure_time VARCHAR(8),
 	stop_id INT(11),
 	stop_sequence INT(11),
-	stop_headsign,
-	pickup_type,
-	shape_dist_traveled
+	stop_headsign VARCHAR(255),
+	pickup_type INT(6),
+	shape_dist_traveled INT(8),
 	KEY `trip_id` (trip_id),
 	KEY `stop_id` (stop_id),
 	KEY `stop_sequence` (stop_sequence)
@@ -104,9 +104,13 @@ DROP TABLE IF EXISTS stops;
 
 CREATE TABLE `stops` (
     stop_id INT(11) PRIMARY KEY,
+	stop_code INT(11),
 	stop_name VARCHAR(255),
 	stop_lat DECIMAL(9,6),
 	stop_lon DECIMAL(9,6),
+	location_type TINYINT(2),
+	parent_station VARCHAR(255),
+	wheelchair_boarding TINYINT(1),
 	KEY `stop_lat` (stop_lat),
 	KEY `stop_lon` (stop_lon)
 );
@@ -114,12 +118,11 @@ CREATE TABLE `stops` (
 DROP TABLE IF EXISTS transfers;
 
 CREATE TABLE `transfers` (
-    stop_id INT(11) PRIMARY KEY,
-	stop_name VARCHAR(255),
-	stop_lat DECIMAL(9,6),
-	stop_lon DECIMAL(9,6),
-	KEY `stop_lat` (stop_lat),
-	KEY `stop_lon` (stop_lon)
+    from_stop_id INT(11) PRIMARY KEY,
+	to_stop_id INT(11),
+	transfer_type INT(11),
+	KEY `from_stop_id` (from_stop_id),
+	KEY `to_stop_id` (to_stop_id)
 );
 
 DROP TABLE IF EXISTS trips;
@@ -130,7 +133,10 @@ CREATE TABLE `trips` (
 	trip_id INT(11) PRIMARY KEY,
 	trip_headsign VARCHAR(255),
 	direction_id TINYINT(1),
+	block_id INT(10),
 	shape_id VARCHAR(50),
+	direction VARCHAR(10),
+	wheelchair_accessible TINYINT(1),
 	KEY `route_id` (route_id),
 	KEY `service_id` (service_id),
 	KEY `direction_id` (direction_id),
